@@ -38,8 +38,8 @@ for img in val_images.find({'downloaded': False}):
         with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
             urlretrieve(img['url'], filename, t.report_hook)
         img['downloaded'] = True
-        train_images.update_one({'_id': img['_id']}, {
-                                "$set": img}, upsert=False)
+        val_images.update_one({'_id': img['_id']}, {
+            "$set": img}, upsert=False)
 print('**************************** Done downloading validation images!')
 
 os.chdir('../test/')
@@ -50,6 +50,6 @@ for img in test_images.find({'downloaded': False}):
         with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
             urlretrieve(img['url'], filename, t.report_hook)
         img['downloaded'] = True
-        train_images.update_one({'_id': img['_id']}, {
-                                "$set": img}, upsert=False)
+        test_images.update_one({'_id': img['_id']}, {
+            "$set": img}, upsert=False)
 print('**************************** Done downloading test images!')
