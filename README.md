@@ -2,6 +2,8 @@
 
 This downloader downloads the ~9 million images part of the Open Image Dataset V4. Mongo is used to keep state on the overall download progress and for error recovery. Should you need to stop, pause and restart the download, only images not downloaded will be downloaded.
 
+Please refer to the CVDF (Common Visual Data Foundation) git repo here for more details: https://github.com/cvdfoundation/open-images-dataset
+
 ## Requirements:
 
 Needs python 3 and mongo installed locally.
