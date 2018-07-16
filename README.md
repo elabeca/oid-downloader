@@ -1,6 +1,6 @@
 # Open Image Dataset V4 downloader
 
-This downloader downloads the ~9 million images part of the Open Image Dataset V4. Mongo server running required.
+This downloader downloads the ~9 million images part of the Open Image Dataset V4. Mongo is used to keep state on the overall download progress and for error recovery. Should you need to stop, pause and restart the download, only images not downloaded will be downloaded.
 
 ## Get the .tsv files from these locations:
 
