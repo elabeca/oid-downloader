@@ -25,7 +25,6 @@ for img in train_images.find({'downloaded': False}):
         filename = os.path.basename(url.path)
         with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
             urlretrieve(img['url'], filename, t.report_hook)
-        print(f'File downloaded is {filename}')
         img['downloaded'] = True
         train_images.update_one({'_id': img['_id']}, {
                                 "$set": img}, upsert=False)
