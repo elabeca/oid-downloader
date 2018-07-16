@@ -2,6 +2,16 @@
 
 This downloader downloads the ~9 million images part of the Open Image Dataset V4. Mongo is used to keep state on the overall download progress and for error recovery. Should you need to stop, pause and restart the download, only images not downloaded will be downloaded.
 
+## Requirements:
+
+Mongo needs to be installed locally.
+
+pip install / conda install the following:
+
+```
+tqdm
+```
+
 ## Get the .tsv files from these locations:
 
 The tsv files for the train set, in 10 partitions:  
