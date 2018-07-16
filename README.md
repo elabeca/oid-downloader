@@ -4,7 +4,7 @@ This downloader downloads the ~9 million images part of the Open Image Dataset V
 
 ## Requirements:
 
-Mongo needs to be installed locally.
+Needs python 3 and mongo installed locally.
 
 pip install / conda install the following:
 
