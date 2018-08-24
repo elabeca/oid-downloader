@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from urllib.request import urlretrieve
 from urllib.parse import urlparse
 from tqdm import tqdm
+from multiprocessing import Pool
 import os
 
 
@@ -14,42 +15,30 @@ class TqdmProgress(tqdm):
 
 client = MongoClient()
 db = client.oid
-train_images = db.train_images
-val_images = db.val_images
-test_images = db.test_images
 
-os.chdir('./train/')
-for img in train_images.find({'downloaded': False}):
-    if not img['downloaded']:
-        url = urlparse(img['url'])
-        filename = os.path.basename(url.path)
-        with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
-            urlretrieve(img['url'], filename, t.report_hook)
-        img['downloaded'] = True
-        train_images.update_one({'_id': img['_id']}, {
-                                "$set": img}, upsert=False)
-print('**************************** Done downloading train images!')
 
-os.chdir('../validation/')
-for img in val_images.find({'downloaded': False}):
-    if not img['downloaded']:
-        url = urlparse(img['url'])
-        filename = os.path.basename(url.path)
-        with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
-            urlretrieve(img['url'], filename, t.report_hook)
-        img['downloaded'] = True
-        val_images.update_one({'_id': img['_id']}, {
-            "$set": img}, upsert=False)
-print('**************************** Done downloading validation images!')
+def download_and_update(img_tuple):
+    (img, img_collection) = img_tuple
+    url = urlparse(img['url'])
+    filename = os.path.basename(url.path)
+    # with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
+    #    urlretrieve(img['url'], filename, t.report_hook)
+    urlretrieve(img['url'], filename)
+    img['downloaded'] = True
+    img_collection.update_one({'_id': img['_id']},
+                              {"$set": img},
+                              upsert=False)
+    print('%s...' % filename)
 
-os.chdir('../test/')
-for img in test_images.find({'downloaded': False}):
-    if not img['downloaded']:
-        url = urlparse(img['url'])
-        filename = os.path.basename(url.path)
-        with TqdmProgress(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
-            urlretrieve(img['url'], filename, t.report_hook)
-        img['downloaded'] = True
-        test_images.update_one({'_id': img['_id']}, {
-            "$set": img}, upsert=False)
-print('**************************** Done downloading test images!')
+
+def download_img_set(path, img_collection):
+    os.chdir(path)
+    for img in img_collection.find({'downloaded': False}):
+        if not img['downloaded']:
+            download_and_update((img, img_collection))
+    print('**************************** Done downloading %s image set' % path)
+
+
+download_img_set('./train/', db.train_images)
+download_img_set('../validation/', db.val_images)
+download_img_set('../test/', db.test_images)
